@@ -3,3 +3,38 @@
 \label{Background}
 
 \lhead{Chapter 2. \emph{Background}}
+
+\section{Plagiarism Detection}
+
+Though our primary aim is to provide insightful analysis of the students' code 
+submissions and not to detect plagiarism, a lot of our research actually took 
+place in the realm of plagiarism. In detecting plagiarism, programs are attempting
+to output a binary result of ``plagiarism detected'' or ``no plagiarism detected''.
+To accomplish this, however, the programs must first build a representation of 
+how similar the code is, and then flag code which is similar above a certain threshold.
+It is now clear why we should leverage this research -- to reliably detect plagiarism,
+we must first reliably judge similarity.
+
+Code similarity detection techniques have been divided up into a number of subclasses:
+Text/token, source tree, PDG (Program Dependency Graph) and metric based[TODO: cite the Roy paper here]. 
+For our pruposes, the PDG approach seems least useful, as souce code in student exercises
+tends to be fairly small scale; there isn't much dependencies between different
+packages as the code, in general, is only based around a small number of packages.
+
+\section{Eclipse plugin}
+
+The Eclipse IDE is a development environment for the Java programming language;
+It provides tools for Java developers to write compile and debug their applications.
+Further to this, it also provides a feature rich environment in which developers
+can create additional plugins to add functionality to the base Eclipse distribution.
+
+With access to this plugin framework, Eclipse exposes some of it's internal APIs
+and allows developers to be able to manipulate Java in complex ways. The key feature
+of this, as it relates to us, is the ability to plug in to the Java compiler of Eclipse
+and manipulate the Parse trees as we wish. This easy access to a parse tree in a
+feature rich environment such as Eclipse was our main motivation behind the approach
+to our primary application. Utilising the plugin environment, we could examine the
+source code as it is parsed, and perform our comparison, all within the standard
+compilation, with no external tools needed.
+
+TODO: orange
