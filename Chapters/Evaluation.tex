@@ -239,24 +239,62 @@ want to avoid the issues discussed in \cref{Background} where the root node has
 an overwhelming effect on the score, a tree with matching nodes that goes down
 many levels should contribute to the score more, as this kind of structure matching
 is very unlikely and thus indicitave of similar code, justifying increasing the
+threshold depth somewhat. Also for the decay factor, a deep matching tree is
+very useful in identfying similar segments.
 
+Ideally in setting these parameters, we want to find a balance between values
+high enough to provide the most insight, but low enough so as not to imbalance
+the score as described previously. To calculate this value, we branched off
+from our main commit branch and generated some tests to calculate the similarity
+scores with every combination of $decay factor=[0.05, 0.1 .. 0.25, 0.3, 0.4 .. 0.9, 1.0]$
+and $threshold depth=[1, 2 .. 10]$. Our initial plan was to see how the heatmaps
+looked with each combination of heuristics, eliminating any that combinations
+that were plainly wrong, e.g. giving too many very low or very high similarity
+values/combinations which didn't allow much to distinguish between projects.
+Upon running the algorithm however, we encountered the overflow problem discussed
+in \cref{sec:Overflow}. This led to a limited number of combinations we could use.
+The maximum \emph{threshold depth} we could consistently use was 3, and similarly for
+a \emph{decay factor} of 0.2. As this maximum was less than even the suggested values,
+we opted to keep these values.
 
-\todo{chose 0.2, any higher and similarity overflows (talk about that in eval)}
-\todo{small threshold depth stops overflow too, want it as high as possible,
-without overflowing}
+\subsection{Result Dimensionality}
+\label{sec:VisTech}
+Orange provides a wide variety of visualisation tools for analysis, however,
+for most of these, expects an array of feature vectors to be passed in, with
+Orange generating the distances itself. Using the distances and the original
+values, it is able to display a large number of information types. It would be
+ideal if we could utilise some of these extra tools for our analysis. Specifically,
+an issue with our clustering method, is that it is confined to the single dimension.
+There are a few times throughout the maps where we see small parts of a cluster
+that acutally have high similarity with other clusters (to find these 
+additional clusters, we need to look for larger squares of similarity away from
+the main diagonal). This indicates that, although the cluster this subcluster
+is part of is the most appropriate, it could also belong to the other cluster,
+where the rest of the nodes in the original cluster may not belong. Seen in
+\cref{fig:NonClusteredCluster}, the squares highlighted in green could be part
+of both the black cluster, which it currently is, as well as the white cluster,
+whilst the rest of the black cluster shouldn't be linked with it. 
 
-\newpage lots todo
-\todo{simplistic code, ok for our purpose. genrealisable to bigger projects?}
+A network graph could be a perfect way to demonstrate this, with nodes connected
+to other nodes with which it shares a similarity above a certain threshold,
+arranging this network could help highlight added regions. These regions could
+occur where parts of a project, perhaps the first half of an exercise, were
+completed in a certain way by a group of students. A subset may have completed
+the second half in a way that is unique from the rest of the set, but similar
+to how yeat another group of students completed it. This would be great to
+highlight to lab coordinators, who could provide group feedback on a per method
+basis for example.
+
+\section{File Compare View}
+The protoype compare view is an 
 
 \todo{hard to evaluate}
 \todo{predictive validity}
-\todo{interesting code cases}
 \todo{different sized trees dont work very well -- DSE as an example}
+\todo{simplistic code, ok for our purpose. genrealisable to bigger projects?}
 \todo{where it falls down}
-\todo{overflow, similarity > 1? and arbitrary heuristic value}
 \todo{speed}
 \todo{unable to reproduce results}
-\todo{results are 1 dimensional, maybe deeper web of similarities}
 todo[integration of other algos]
 
 todo[file compare view: needs improving]
