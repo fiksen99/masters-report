@@ -148,7 +148,7 @@ Our implementation has proven to be successful in identifying a number of
 interesting findings in our code bases. Unfortunately, it is not as successful
 in every instance. If we take a more complex coursework, such as Discrete
 Event Simulation, and run the same tests, our output is not as useful. 
-\cref{fig:DSEHeatmap} shows the heatmap we generate from this data set. The
+\cref{fig:DESHeatmap} shows the heatmap we generate from this data set. The
 yellow colour is used to indicate the maximum distance value of the graph. Here,
 the maximum value is 100, indicating an overflow of similarity (i.e. the algorithm
 return $N(s, s') > 1$). If we receive an result greater than one, there is no
@@ -163,9 +163,9 @@ Before
 \begin{figure}[H]
 
 	\centering
-		\includegraphics[width=1.2\textwidth]{Figures/DSEHeatmap}
+		\includegraphics[width=1.2\textwidth]{Figures/DESHeatmapOverflow}
 	\caption{Discrete Event Simulation Heatmap}
-	\label{fig:DSEHeatmap}
+	\label{fig:DESHeatmap}
 
 \end{figure}
 
@@ -211,7 +211,7 @@ child node doesn’t match with any of the children of T\textsubscript{2}, and t
 call hits the base case for different $n\textsubscript{1}$ and $n\textsubscript{2}$ (i.e. return 0) in each 
 comparison. Swapping the order of the arguments results in the root of T\textsubscript{2} being the
 primary node. As we use the maximum value returned for the comparison
-of each child node, the two \MethodDeclaration nodes both match with the one MethodDeclaration node in T1, thus the result of the similarity comparison is $\lambda(1 + \lambda)^2$.
+of each child node, the two MethodDeclaration nodes both match with the one MethodDeclaration node in T1, thus the result of the similarity comparison is $\lambda(1 + \lambda)^2$.
 
 Again, we have multiple methods with which to overcome this issue and ensure reflexivity. Our approach looked at the uniqueness property of the children. If a single node has many child nodes of mostly similar types, and is compared with a node which has many unique type of child nodes, it is likely that the children of the unique style node contain at least one node that the non-unique children of the first node can all match with. i.e. a node, n\textsubscript{1}, with 5 MethodDeclaration children and a node, n2, with 1 MethodDeclaration child and 4 assorted children (e.g. Modifier, FieldDeclaration etc.), if compared with n\textsubscript{1} as the primary node, would return $\lambda(1 + \lambda)^5$ -- a high value -- even though only one node was similar. We also see no reference to the dissimilar nodes in the similarity score. Instead, we set the primary node to be the node with the most uniquely typed children, ensuring that a node with many different type of child nodes will match only partially against a node with identical children.
 If the uniqueness value is the same for both nodes, it is still possible that the children are different. In this case, we use a priority queue, adding the the children to the queue, with one queue for each root node. These queues are then iterated over and once a mismatch is found in the elements at the same index, the node whose queue has the highest priority at this index is chosen as the primary node. This is an arbitrary decision and could be improved upon further, however
@@ -231,7 +231,16 @@ of the parse tree, of which there are around 100, so this was left unimplemented
 
 \subsection{Heuristic choices}
 The heuristic choices, \emph{threshold depth} and \emph{decay factor}, were 
-set as 3 and 0.3 in the initial research for the algorithm to be 
+set as 3 and 0.3 in the initial research for the algorithm\cite{ParseTreeKernel}. 
+The paper doesn't offer any insight as to how to calculate the optimal values
+for this so we developed our own technique. We noticed that generally a higher value
+for each would incorporate more information in a similarity analysis. Although we
+want to avoid the issues discussed in \cref{Background} where the root node has
+an overwhelming effect on the score, a tree with matching nodes that goes down
+many levels should contribute to the score more, as this kind of structure matching
+is very unlikely and thus indicitave of similar code, justifying increasing the
+
+
 \todo{chose 0.2, any higher and similarity overflows (talk about that in eval)}
 \todo{small threshold depth stops overflow too, want it as high as possible,
 without overflowing}
