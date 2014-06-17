@@ -51,7 +51,7 @@ our similarity function.
 To perform the comparison of nodes, we get the type of the \texttt{ASTNode} held
 in the \texttt{ASTNodeWithChildren}, and match on that.
 
-Further modifications and criticisms of the algorithm are discussed in \cref{Evaluation}
+Further modifications and criticisms of the algorithm are discussed in \cref{Evaluation}.
 
 \begin{figure}
 \begin{minipage}[b]{0.45\linewidth}
@@ -88,9 +88,9 @@ for(int i = 0; i < size; i++) {
 \end{figure}
 
 \section{Individual File Comparison}
-
-In \cref{sec:Two File Comparison View}, we discuss our plugin implementation
-of a feature in which we can compare two files (rather than projects) and highlight
+\label{sec:SimilarityAnalysis}
+In \cref{sec:Two File Comparison View}, we will examine a feature 
+our plugin in which we can compare two files (rather than projects) and highlight
 the areas of highest similarity. To get a similarity measure between two files
 the parse tree algorithm, which is aimed at getting the similarity of a whole
 file, needs to be altered so the subtrees of the file can each be compared in a 
@@ -98,7 +98,7 @@ normalised manner. The original algorithm iterates over every subtree, calculati
 a score for each, but this value is unnormalised until combined with all scores.
 As is the case in the main section of the algorithm -- an unnormalised value
 will unfairly weight larger trees that perhaps match less well than the
-smaller trees. The normalising schemes are discussed in \ref{Evaluation}
+smaller trees.
 
 \chapter{Plugin Design}
 
@@ -146,10 +146,9 @@ named [project\_name]\_skeleton\_. If this Directory is found, we create a Set,
 which will hold the names of unmodified (and therefore uninteresting) code.
 
 Initially the Parse Tree Analyser was set up to iterate over the projects, and
-compare each in turn as defined in the equations discussed in the background [TODO:
+compare each in turn as defined in the equations discussed in the background 
 \cref{eq:parseTreeKernelBase1}, \cref{eq:parseTreeKernelBase2},
-\cref{eq:parseTreeKernelRecurse}
-insert reference to figure here]. Here our implementation makes an assumption about
+\cref{eq:parseTreeKernelRecurse}. Here our implementation makes an assumption about
 the algorithm; the algorithm indicates how to get a similarity score between two 
 parse trees, however it does not indicate how to perform this measure across a code
 base of multiple files. Our implementation finds the maximum similarity of one file
@@ -182,8 +181,8 @@ respectively, as discussed in \cref{Evaluation}
 \label{sec:Two File Comparison View}
 
 In viewing the distance map and cluster output, we can see pairs of projects that are
-interesting -- for example, looking at the section of heatmap in
-\cref{fig:interestingSubcluster} we could identify an interesting cluster which
+interesting -- for example, looking at the heatmap display,
+we could identify an interesting cluster which
 appears dissimilar to most of the other submitted code, but very similar to
 each other. If we cross reference this with the grades received and see
 onsistent grading of these unique outliers, it would be interesting to open
@@ -194,14 +193,24 @@ be applied on a finer grained level between two files, and highlight areas
 of interest.
 
 We developed a proof of concept implementation of this idea inside our plugin.
-The view we were looking for has been mocked in \cref{fig:mockComparison}. Here,
+The view we were looking for would look much like the diff comparison view,
+as seen in \cref{fig:diffView}, however the highlighted areas would
+be of structurally similar code, and not necessarily in sequential order. Here,
 rather than performing the standard diff of text and highlighting the areas
 changed, the most similar segments between the two files are identified and
 linked together. The match would be defined by some threshold similarity, relative
 to the general similarity of the projects.
 
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=\textwidth]{Figures/EclipseDiffView}
+	\caption{The proposed comparison view would closely resemble the current eclipse
+	diff view, with a few minor changes}
+	\label{fig:diffView}
+\end{figure}
+
 To implement this we worked through the eclispe source code, specifically
-the org.eclipse.compare packages\cite{eclipseCompare}. The documentation
+the org.eclipse.compare packages\footnote{http://goo.gl/hhjWK7}. The documentation
 on modifying the differencing engine was sparse and large, complex library 
 classes required an ad hoc approach to creating our required classes.
 Initially we created another extension in the menu as an entry to our program
@@ -209,14 +218,14 @@ and hooked up a new handler to deal with the comparison. This handler opens
 up a 2 way comparison between every seleted file, using our custom 
 SimilarityCompareEditorInput. The SimilarityCompareEditorInput borrows 
 a large amount of code from the eGit
-codebase\cite{egitCompare}, and is essentially a thinned out version of their
+codebase\footnote{https://git.eclipse.org/c/egit/egit.git/tree/}, and is essentially a thinned out version of their
 class, providing only primarily skeleton methods that allow us to setup the
 configuration of files. 
 
 The custom diff view is then created with dependency injection. Using the
-JavaContentViewerCreator\cite{rubenlaguna}, and extending the extension point
-org.eclipse.compare.contentMergeViewers, we generate our ParseTreeMergeViewer.
-This class is a copy of the TextMergeViewer Eclipse class, modified to use
+JavaContentViewerCreator\footnote{http://rubenlaguna.com/wp/2007/08/18/eclipse-cvs-compare/}, and extending the extension point
+\texttt{org.eclipse.compare.contentMergeViewers}, we generate our ParseTreeMergeViewer.
+This class is a copy of the \texttt{TextMergeViewer} Eclipse class, modified to use
 its own fields and methods, rather than the inaccessible package protected versions
 of the ContentMergeViewer, which is being extended. The primary modification
 to this class was the use of ParseTreeDocumentMerger as a replacement for the
@@ -240,12 +249,12 @@ our result. We can see the green bar on the right indicating the most similar
 methods of the two classes; selecting this green bar highlights the similar
 methods in both source files.
 
-\todo{references: package com.rubenlaguna.eclipse.javacompare,
-
-org.eclipse.egit.ui
-http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fcompare%2Fpackage-summary.html
-org.eclipse.compare}
-
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=\textwidth]{Figures/FinalCodeCompare}
+	\caption{The final, scaled back version of individual file comparison}
+	\label{fig:finalCodeCompare}
+\end{figure}
 
 
 \chapter{Implementation Improvements}
@@ -253,7 +262,7 @@ org.eclipse.compare}
 \section{Algorithm}
 
 A number of issues arose with the algorithm, requiring modifications to fit our
-needs. \todo{bigger intro to improvements}
+needs. 
 
 \subsection{Multiple Classes and Packages}
 
@@ -296,8 +305,11 @@ Eclipse until the analysis completes.
 
 When performing the actual comparisons, we make heavy use of threading and caching
 to parallelise computation. 2 threads per processor are set off, computing the similarity
-of files. Each thread takes on $\frac{1}{num processors}$ projects, 
-comparing their projects against the whole set. The speed up is reasonable, with
+of files. Each thread takes on $\frac{1}{num threads}$ projects, 
+comparing their projects against the whole set. The current implementation relies on the
+assumption that all projects are roughly the same size, and so an intelligent
+assignment of tasks is unneeded -- each thread takes the project's whose positions
+satisfy $pos \% num threads == thread ID$. The speed up is reasonable, with
 a full data set comparison of projects reducing from 86 to around 42 seconds on
-a quad core processor with hyperthreading (i.e. 8 threads).\todo{speed graph}
+a quad core processor with hyperthreading (i.e. 8 threads).
 

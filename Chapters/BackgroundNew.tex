@@ -24,7 +24,7 @@ of our knowledge of the files we are comparing. Generally these algorithms
 will compare two pieces of code by considering them both as a sequence of
 strings (often using a line per string), matching the number of identical
 strings or finding the longest sequence of matching strings. 
-Optimisations/improvements of this approach will remove comments and whitespace
+Optimisations or improvements of this approach will remove comments and whitespace
 and apply normalisation on the source code. This normalisation involves replacing
 certain types of elements with a uniform replacement, as described in 
 \cref{tab:normalise}. An example of these optimisations can be see in 
@@ -38,7 +38,30 @@ matching, as these sections don't change the semantics of code, yet could cause
 misses in the matching algorithm if people used different comments etc. in
 their solutions, as is expected, and they were retained.
 
-\begin{figure}
+\begin{figure}[p]
+\label{tab:normalise}
+\begin{tabular}{| l | l | l |}
+\hline 
+\textbf{Language element} & \textbf{Example} & \textbf{Replacement} \\
+\hline \hline
+Literal string & ``Abort'' & ``...'' \\
+\hline
+Literal character & `y' & `.' \\
+\hline
+Literal integer & 42 & 1 \\
+\hline
+Literal decimal & 0.314159 & 1.0 \\
+\hline
+Identifier & counter & p \\
+\hline
+Basic numerical type & int, short, long, double & num \\
+\hline
+Function name & main & foo() \\
+\hline \hline
+\end{tabular}
+\caption{Normalization table as used in text based approaches\cite{DucasseText}}
+\end{figure}
+\begin{figure}[p]
 \begin{tabular}{l l l}
 \textbf{Original Code} & \textbf{After Normalising} & \textbf{After Filtering} \\
 \texttt{include stdio.h} & \texttt{include lib} & \\
@@ -172,8 +195,8 @@ and and access to data\cite{PDGOptimisation}. The structure of these graphs
 is generally invariant under plagiarism, as it is robust to changes in line
 orders, additional comments and whitespace\cite{GPLAG}. As a result, the technique is well
 suited to plagiarism and therefore similarity detection. Numerous studies have been based
-on the PDG approach to plagiarism detection\cite{GPLAG} \cite{pdg plag2}, giving
-interesting results into it's applicability 
+on the PDG approach to plagiarism detection\cite{GPLAG} \cite{OtherPDG}, giving
+interesting results into it's applicability.
 
 There is a small amount of research which analyses the parse trees
 of the code directly. Though sparse, the work in this area is interesting
@@ -185,7 +208,7 @@ containing the variables and data types used in the code\cite{Belkhouche}. This 
 chart is partitioned into regions based upon their type (sequential, repetition
 and selection), with the partitioning applied recursively until the partitions
 have at least one statement. The partitioning of two pieces of code, defined in
-\cref{fig:belkhoucheCode1} and \cref{fig:belkhoucheCode2}, are shown in
+\cref{code:belkhouche1} and \cref{code:belkhouche2}, are shown in
 \cref{fig:belkhoucheRegions1} and \cref{fig:belkhoucheRegions2}. These regions
 now make up an abstract region tree, which undergo abstract comparison. For
 each level of the region tree, compare the nodes in the tree, scoring a similarity
@@ -248,7 +271,7 @@ sqr = sqr;
 return sqr;
 \end{lstlisting}
 \caption{Simple modifications of \cref{code:belkhouche1} as outlined in
-\cref{fig:belkoucheRegions2}}
+\cref{fig:belkhoucheRegions2}}
 \label{code:belkhouche2}
 \end{figure}
 
@@ -262,7 +285,7 @@ return sqr;
 	\centering
 		\includegraphics[width=\textwidth]{Figures/Belkhouche2}
 	\caption{Regions specified for the code in \cref{code:belkhouche2} with Belkhouche et. al's method~\cite{Belkhouche}}
-	\label{fig:BelkhoucheRegions2}
+	\label{fig:belkhoucheRegions2}
 
 \end{figure}
 
@@ -337,8 +360,15 @@ grow much deeper, with nested loops, inner classes etc. It can be seen that the
 depth of a large tree is an issue as when a root node, or a node near the root,
 is modified, the change has a much bigger influence on the result than if
 the change appeared further towards the leaves -- given that the parse tree 
-kernel uses all subtrees of a tree\cite{ParseTreeKernel}. \todo{should I 
-explan this with an example?}
+kernel uses all subtrees of a tree\cite{ParseTreeKernel}. 
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=\textwidth]{Figures/SimpleParseTree}
+	\caption{An example parse tree we can apply the steps of the parse tree kernel
+	algorithm to}
+	\label{fig:SimpleParseTree}
+\end{figure}
 
 This concern is avoided with the introduction of a \emph{decay factor},
 $\lambda$ defined as $0 < \lambda \le 1$. This factor is applied to each
@@ -387,14 +417,14 @@ If $n\textsubscript{1}$ and $n\textsubscript{2}$ are different (this is understo
 to mean, if the types of the node are different, e.g. a \emph{method declaration}
 node and a \emph{variable assignment} node)
 then:
-\begin{equation}
+\begin{equation}\label{eq:parseTreeKernelBase1}
 C(n\textsubscript{1}, n\textsubscript{2}) = 0
 \end{equation}
 
 If both $n\textsubscript{1}$ and $n\textsubscript{2}$ are terminals or the
 current depth is $\Delta$ then:
 
-\begin{equation}
+\begin{equation}\label{eq:parseTreeKernelBase2}
 C(n\textsubscript{1}, n\textsubscript{2}) = \lambda
 \end{equation}
 
@@ -402,7 +432,7 @@ Else, we have two options:
 
 \begin{enumerate}
 \item Maximum node value, MNV:
-\begin{equation}
+\begin{equation}\label{eq:parseTreeKernelRecurse}
 C(n\textsubscript{1}, n\textsubscript{2}) = \lambda\prod_{i}^{nc(n\textsubscript{1})}
 {(1+\max_{ch \in ch \textsubscript{n\textsubscript{2}}}{C(ch\textsubscript{i}
 (n\textsubscript{1}), ch))}}
@@ -416,7 +446,6 @@ C(n\textsubscript{1}, n\textsubscript{2}) = \lambda\prod_{i}^{nc(n\textsubscript
 \end{equation}
 \end{enumerate}
 \label{secondImprovementParseTreeKernel}
-\cite{ParseTreeKernel}
 
 The authors have opted for the MNV variant of the recursive case, justifying
 as their aim is to detect plagiarism, and therefore want the highest similarity.
@@ -440,12 +469,54 @@ based on the size of the trees e.g. two large, vaguely similar trees
 could return a much larger value than two tiny trees that are identical. As
 such a normalised step is defined such that:
 
-\begin{equation}
+\begin{equation}\label{eq:normalise}
 N(s,s') = \frac{k(s, s')}{\sqrt{k(s, s) \cdot k(s', s')}}
 \end{equation}
 
 This ensures that the similarity between $s$ and $s'$, is bounded such that 
 $0 \le N(s, s') \le 1$.
+
+A worked example can be seen with \cref{fig:SimpleParseTree}. To calculate
+$K(T\textsubscript{1}, T\textsubscript{2})$, we need to find the sum of
+calls to C for every combination of nodes in the trees.
+
+\begin{equation}
+C(A\textsubscript{1a}, A\textsubscript{2a}) = 
+\lambda(1+\max_{ch\in ch\textsubscript{A\textsubscript{2a}}}{C(B\textsubscript{1}, ch)})
+(1+\max_{ch\in ch\textsubscript{A\textsubscript{2a}}}{C(A\textsubscript{1b}, ch)})
+\end{equation}
+
+We know that $C(B\textsubscript{1}, n\textsubscript{2}) = 0$ as the second tree
+doesn't contain any \emph{B} nodes and the rules in \cref{eq:parseTreeKernelBase1}. 
+The second recursive call to C 
+($C(A\textsubscript{1b}, ch)$), will return $\lambda$ for both child nodes as
+they are the same type via \cref{eq:parseTreeKernelBase2}. Therefore 
+\begin{equation}
+C(A\textsubscript{1a}, A\textsubscript{2a}) = \lambda(1+\lambda)(1+0)
+= \lambda(1+\lambda)
+\end{equation}
+
+as the leaf nodes have no children, the product for the case of 
+$C(A\textsubscript{1a}, A\textsubscript{2b})$ and $C(A\textsubscript{1a}, A\textsubscript{2c})$ 
+simply returns $\lambda$ both times.
+
+As stated, comparing $B\textsubscript{1}$ with each node in $T\textsubscript{2}$ will
+return 0.
+
+Finally, the node $A\textsubscript{1b}$ will be compared with each node in turn.
+When comparing it with the root node $A\textsubscript{2a}$, we see that 
+$nc(A\textsubscript{1b}) == 0$ therefore no values come out of the product and
+$\lambda$ is returned. By \cref{eq:parseTreeKernelBase2}, when comparing the
+node with both $A\textsubscript{2b}$ and $A\textsubscript{2c}$, we get $\lambda$
+both times.
+
+As the similarity requires the sum of these calls to C:
+
+\begin{equation}
+k(T\textsubscript{1}, T\textsubscript{2}) = \lambda(1+\lambda) + 5\lambda
+\end{equation}
+
+assuming $\Delta > 1$.
 
 The algorithm discussed uses two values, \emph{threshold depth} and 
 \emph{decay factor}, to calculate the similarity. The paper claims in their
@@ -483,7 +554,8 @@ which is vital. Indeed, the main pieces of research into parse tree analysis
 are based around C \cite{Belkhouche} and Java \cite{ParseTreeKernel}.
 
 Other research has generally taken the route of using a lexer/parser generator,
-such as flex\cite{flex} and bison\cite{bison} to generate their parse trees
+such as flex\footnote{http://flex.sourceforge.net/} and 
+bison\footnote{http://www.gnu.org/software/bison/} to generate their parse trees
 for analysis. Whilst this is a perfectly valid approach, we felt it would be
 ideal if we could plug directly in to a compiler used on the course. This
 would ensure we don't need to concern ourselves with creating a grammar for a
@@ -491,26 +563,29 @@ language, as this is built in to the compiler. Instead, we would be able to
 take the data structure from an intermediate stage of compilation and perform
 analysis directly on it.
 
-Our initial approach took us to the gcc compiler -- there is a very large
+Our initial approach took us to the GCC compiler -- there is a very large
 Operating Systems coursework and it would have been exciting to see what insights
-we could gain around it. We found a great plugin framework\cite{gccPlugin}, which
-allows developers to add features to gcc to be performed during compilation. The
+we could gain around it. We found a great plugin 
+framework\footnote{https://gcc.gnu.org/onlinedocs/gccint/Plugins.html}, which
+allows developers to add features to GCC to be performed during compilation. The
 plugin framework is so beneficial as it prevents users relying on extending
 a particular version of the compiler, and being forced to update their features
 as the compiler updates with incompatible changes. The compiler generates an
 AST in a language specific format, however from here, transforms code into a
-Generic/GIMPLE format, as demonstrated in \cref{fig:gccFlow}. This format is
+Generic/GIMPLE format, as demonstrated in \cref{fig:GCCFlow}. This format is
 language independent and so our algorithm could be applied to any language
 which has a GNU compiler.
-	\todo{how do I cite this? http://en.wikibooks.org/wiki/File:Gcc.JPG}
+
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=\textwidth]{Figures/GCCFlow}
-	\caption{The GCC compilation process \cite{gccFlow}}
-	\label{fig:gccFlow}
+		\includegraphics[width=\textwidth]{Figures/GCCFlow}\footnotemark{}
+	\caption{The GCC compilation process}
+	\label{fig:GCCFlow}
+	
 \end{figure}
 
-Unfortunately, the gcc plugin framework had a major drawback -- when compiling
+Unfortunately, the GCC plugin framework had a major drawback -- when compiling
+\footnotetext{http://en.wikibooks.org/wiki/File:GCC.JPG}
 the code, we had full access to manipulate the parse tree, however there was
 no way to store the tree in a format that allowed it to be rebuilt 
 programmatically. A raw dump of the tree could be made, but no API was 
@@ -539,7 +614,7 @@ With a huge array (NxN) of scores, it is infeasible to manually search through
 these scores and pick out interesting trends. This led us to look for a data
 analysis package that could provide a rich interface and is easy to use. There
 are a number of data visualisation tools available as Java libraries that would
-have been ideal to use. Prefuse\cite{Prefuse} was a possibility, a free
+have been ideal to use. Prefuse\footnote{http://prefuse.org/} was a possibility, a free
 to use, open source library. It provides support for visualisation of assorted
 graphs, trees and tables, using its own SQL-like expression language to input
 data. This library, however, is sparsely updated (the last commit being 10
@@ -548,7 +623,7 @@ Trees' page of the manual informs us that the page is `Under Construction!
 Coming soon'; the page was last updated in 2007.
 
 Few other Java visualisation options were found, and so we looked for other
-data visualisation packages. Orange \cite{orange} is a cross platform data
+data visualisation packages. Orange\footnote{http://orange.biolab.si/} is a cross platform data
 visualisation tool developed in python. It is an interesting package, having
 a CLI to perform custom analyses, but also an easy to use GUI. The GUI uses
 a widget toolkit to allow for easy data processing -- many types of nodes

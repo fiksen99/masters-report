@@ -1,26 +1,110 @@
+\chapter{Conclusions}
+
+We have examined various approaches to plagiarism detection in reasearch,
+and how they are applicable to the idea of similarity detection.
+Highlighting an area that is somewhat underrepresented in the literature,
+we created a system to perform similarity analysis on Java code based on a 
+parse tree kernel approach. The algorithm has proven problematic and needed
+to be modified before it could be implemented in such a manner.
+However once these challenges were overcome, we were able to produce a tool
+that was able to give us genuine insight into the code base we were comparing.
+Not completely perfect, the implementation still fails on some more complex
+projects and could be refined further to deal with these.
+
+We have also been able to integrate this with Eclipse in a plugin, providing
+easy access to our tool for any potential users, and ease of analysis within
+the plugin by interacting directly with the source code's AST. A view has
+also been created to compare the code side-by-side to assist in the code
+examination process. This comparison view is something we would have liked
+to explore a lot more, but the complexity of dealing with the Eclipse 
+source code, in particular extending classes with package protected variables,
+proved time consuming. In the end, the functional if ugly comparison view
+is quite an achievement.
+
 \chapter{Future Work}
 \label{Future Work}
 
-\section{speedup}
+The research undertaken in this project and work completed has opened up
+numerous avenues for further exploration in this field. Some of these
+relate specifically to the plugin developed, such as speed improvements and extensions.
+There is also scope to expand on the theoretical aspect of the project, with potential
+new algorithms or analyses to be presented.
 
-\todo{future: heuristic - if named the same then probably the same file, increases speed}
+\subsection{Speed up via Heuristics}
+\begin{itemize}
+\item
+Much of the algorithm implementation is naive with respect to the problem domain.
+Although we have looked at an approach which uses the code's parse tree to 
+analyse the structure, other factors that we know to be true have been omitted
+in our solutions. 
 
-\todo{skip files with low similarity to similar files}
+Java is a fully object oriented language, which informs on a number of details
+about the files we are analysing. The simplest of these to catch is the file name;
+when iterating over the projects' files, our implementation compares every file
+in the first project with every file in the second. Given that the file names
+are the same as the class names, it may be the case that files of the same name
+likely represent the same class, and so the similarity of the two can be directly
+calculated. This could massively speed up comparison time where projects generally
+share the same structure. Though this would be trivial to implement now, a proper
+analysis would need to be performed to weigh up the speed benefit with the loss in
+accuracy that would occur: if classes were split across multiple files, or named
+poorly to clash with other, non-similar classes, the speed increase would likely not
+be worth it. Testing this on real world data with student submissions would be
+a good method for determining this.
 
-\section{Correctness Improvements}
+\item
+When comparing a certain file with others, skipping files with a low similarity 
+to already matched files (either from the same or different projects) provides
+an opportunity to get a speed increase from our algorithm. The logic is that
+similarity is thought to be transitive; if File A is similar to File B, and
+File B is dissimilar to File C, it follows that File A would likely be dissimilar
+to File C. Again, whilst this would be fairly straightforward to implement, it
+is trickier to be certain of the advantages this would bring. As discussed in
+\cref{Evaluation}, there can be multiple clusters that a piece of code belongs
+to, in the case described, applying this method may result in the cluster
+spanning files skipping comparisons with files that actually prove to be similar.
+\end{itemize}
 
-\todo{extensions: convert identical functions eg x += 1 and x++}
+\subsection{Correctness Improvements}
 
-\todo{multiple dimensions of clustering and similarity?}
+\begin{itemize}
+\item
+The algorithm already performs fairly efficiently, given a large number of 
+projects; however it has been demonstrated that it can often be lacking
+in correctness, especially for the more complex projects. To improve this,
+there are a number of approaches that could be taken. One interesting idea
+touched upon previously is the increasing of dimensions in similarity clustering.
+It would be interesting to see how the code is able to cluster when it isn't forced
+into a 2 dimensional grid, but rather could cluster organically. It is likely
+that the correctness of the clustering would increase, however it is also possible 
+that an increase in dimensionality would hamper readability and the similarity
+clusters would thus be difficult to spot.
 
-\todo{group feedback on clusters, needs the similar methods etc. running correctly}
+\item
+Programmers often have their own style of coding. Examples include
+declaration of variable in vs. outside of for loop declarations;
+using the ternary operator vs. an if-then-else. These language
+different consructs perform the same function as their alternatives,
+however would come under a different node type during comparison
+and thus be seen as not a match, despite the code being similar as a result of
+this. If the nodes were transformed such that the functionally equivalent
+styles were made identical, it would hepl improve useful feedback by
+categorising the users as similar.
 
+\item
+Much has been made of the other types of algorithms in \cref{Background}, and
+their robustness and correctness has been well proven. A merged approach of types
+of similarity measure could be used to inform on each other how similar certain
+constructs are. A learning approach could even be used so that the separate algorithms
+could learn from each other, improving their own correctness.
 \todo{integrate with other algorithms}
+\end{itemize}
+% \section{Additions}
 
-\section{Additions}
+% \todo{other languages with CDT etc.}
 
-\todo{other languages with CDT etc.}
+% \todo{improvements to compare view}
 
-\todo{different similarity algos?}
+% \todo{different similarity algos?}
 
-\todo{modification to show difference? if they dont match return 1, else return 1-(1/depth+1)*lambda * min(recurse)}
+% \todo{modification to show difference? if they dont match return 1, else return 1-(1/depth+1)*lambda * min(recurse)}

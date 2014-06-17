@@ -36,7 +36,7 @@ use many while and for loops (in differing numbers) compared with the other,
 who only has a small smattering of while loops.
 
 
-\begin{figure}
+\begin{figure}[H]
 
 	\centering
 		\includegraphics[width=1.2\textwidth]{Figures/RecursionHeatmap}
@@ -47,6 +47,16 @@ who only has a small smattering of while loops.
 	\label{fig:recursionHeatmap}
 
 \end{figure}
+
+\begin{figure}[p]
+
+	\centering
+		\includegraphics[width=1.2\textwidth]{Figures/RecursionClustering}
+	\caption{The clustering hierarchy performed with complete linkage}
+	\label{fig:recursionHierarchy}
+
+\end{figure}
+
 
 Another observation from this heatmap is in the small two student cluster highlighted
 in green. Upon opening the files together, we can see the two files are
@@ -59,7 +69,7 @@ reordering of \texttt{n == r} to \texttt{r == n} don't reduce similarity
 as the id of these things is ignored; similarly, the \texttt{private} to 
 \texttt{public} access modifier change is ignored. Finally, the order of the
 method definitions has been swapped around, however due to the second improvement
-to the parse tree kernel function \cpageref{secondImprovementParseTreeKernel}
+to the parse tree kernel function (\cref{eq:parseTreeKernelRecurse}
 the order of nodes doesn't matter, i.e. we can define our methods in any order
 and the similarity will always be identical.
 
@@ -144,6 +154,26 @@ Our succesful cases aren't constrained to the one exercise either.
 demonstrate the outputs of our similarity function to the parse tree kernel
 function.
 
+
+
+\begin{figure}[h!]
+
+	\centering
+		\includegraphics[width=1.2\textwidth]{Figures/LoopArrayHeatmap}
+	\caption{A heatmap of similarities for the loop and arrays exercise}
+	\label{fig:LoopsAndArraysHeatmap}
+
+\end{figure}
+
+% \begin{figure}[p]
+
+% 	\centering
+% 		\includegraphics[width=1.2\textwidth]{Figures/RecursionHierarchy}
+% 	\caption{The clustering hierarchy performed with complete linkage}
+% 	\label{fig:LoopsAndArraysHierarchy}
+
+% \end{figure}
+
 Our implementation has proven to be successful in identifying a number of
 interesting findings in our code bases. Unfortunately, it is not as successful
 in every instance. If we take a more complex coursework, such as Discrete
@@ -157,10 +187,7 @@ the normalisation of the kernel function should guarantee a value between 0
 and 1. After much debugging of our code, we decided to investigate this claim
 of similarity bounds. 
 
-Consider the parse trees given in \cref{fig:OverflowParseTreesBeforeReflex}
-Before 
-
-\begin{figure}[H]
+\begin{figure}[h!]
 
 	\centering
 		\includegraphics[width=1.2\textwidth]{Figures/DESHeatmapOverflow}
@@ -168,6 +195,13 @@ Before
 	\label{fig:DESHeatmap}
 
 \end{figure}
+
+What we found was that the normalising function, whilst applicable to the original
+function\cite{NLPKernel} and ensuring a bounded similarity, is not 
+guaranteed to bound the similarity in the final function. Consider a small tree
+compared with a much larger tree; if the small tree's nodes match many times with
+the nodes in the large tree, then $k(small, large) >> k(small, small)$. As a result
+of this, the top half of the normalisation equation \cref{eq:normalise}
 
 \section{Reflexivity}
 In a similarity measure, we expect the output to be reflexive, that is the similarity of trees `A' and `B' should be equal to the similarity of trees `B' and `A'. The algorithm doesn’t actually address this issue, and in its original state, it is not reflexive.
@@ -187,8 +221,6 @@ $C(ClassDefinition\textsubscript{T2}, ClassDefinition\textsubscript{T1})$, using
 iterate over both child nodes in T2, comparing it with the single child node of
 T1. Each node comparison multiplies the result by $1+C(MethodDeclaration\textsubscript{T2},MethodDeclaration\textsubscript{T1})$, the call to $C$ returning $\lambda$, as above. As such, we have a different result depending on the order of comparison.
 The options we had in modifying the algorithm to maintain reflexivity
-￼￼\todo{parse trees that aren’t reflexive}
-￼
 focussed on the fact that regardless of order the nodes were passed in to the comparison function, the children must be iterated on in the same manner. 
 \todo{could have iterated both ways and taken an average, copmutationally infeasible}
 i.e. if $C(n\textsubscript{1},n\textsubscript{2})$ goes through each child of $n\textsubscript{2}$ and the max similarity of each with $n\textsubscript{1}$, then the same should happen for
@@ -228,8 +260,44 @@ of the parse tree, of which there are around 100, so this was left unimplemented
 
 \todo{fails when smaller tree is duplicated numerous times in bigger tree}
 
+\section{Results Comparison}
 
-\subsection{Heuristic choices}
+A novel use of the tool is compare the marks received by students with the outputted clusters.
+Given a student's work is evaluated at 10/10, it is likely that any
+code with high similarity would be given the same grade. When plotting the graph
+of mark against similarity to this paricular piece of work, it's expected to
+to see a graph indicating that students further away from this student's code
+base received worse marks. What would be interesting to observe on this graph,
+are any nodes that do not conform to this pattern, particuarly if the non-conforming
+pieces are sparse. If we have a cluster of results that are dissimilar to the
+selected top mark, but all received a high mark, this would indicate a 
+non-unique solution to the exercise and graders could provide group feedback
+according to the approach used. However if there is only a small number, or single
+submission who has received a low similarity but a high mark, then this student
+may have identified a unique solution to the problem using intuition that most
+others may not have thought of. If this could be highlighted, feedback could
+be sent to the whole class indicating the other solution, perhaps inspiring the
+students to try and find unique solutions in coming exercises.
+
+\begin{figure}[h!]
+
+	\centering
+		\includegraphics[width=0.8\textwidth]{Figures/SimGraphma8512Loops}
+	\caption{Similarity of code compared with a top student's work}
+	\label{fig:TopMarkComparison}
+
+\end{figure}
+
+We have a plot as described in \cref{fig:TopMarkComparison}. Here we see no
+paticularly unique solutions, however there are questions to be asked of the
+bottom right outlier -- the solution has high similarity with the correct answer
+but a distinctly low mark. Upon examination of the code, we see that there actually
+isn't too much wrong with their submission. The program behaves in much the same
+way as the benchmark, and probably deserves a higher grade than it achieved.
+This is a reasonable example of the benefits of the analysis to markers, this
+could be quickly identified and rectified.
+
+\section{Heuristic choices}
 The heuristic choices, \emph{threshold depth} and \emph{decay factor}, were 
 set as 3 and 0.3 in the initial research for the algorithm\cite{ParseTreeKernel}. 
 The paper doesn't offer any insight as to how to calculate the optimal values
@@ -257,7 +325,7 @@ The maximum \emph{threshold depth} we could consistently use was 3, and similarl
 a \emph{decay factor} of 0.2. As this maximum was less than even the suggested values,
 we opted to keep these values.
 
-\subsection{Result Dimensionality}
+\section{Result Dimensionality}
 \label{sec:VisTech}
 Orange provides a wide variety of visualisation tools for analysis, however,
 for most of these, expects an array of feature vectors to be passed in, with
@@ -275,6 +343,16 @@ where the rest of the nodes in the original cluster may not belong. Seen in
 of both the black cluster, which it currently is, as well as the white cluster,
 whilst the rest of the black cluster shouldn't be linked with it. 
 
+\begin{figure}[h!]
+
+	\centering
+		\includegraphics[width=0.8\textwidth]{Figures/NonClusteredCluster}
+	\caption{Heatmap, highlighting the similar nodes that weren't able
+	to be clustered together with complete linkage}
+	\label{fig:TopMarkComparison}
+
+\end{figure}
+
 A network graph could be a perfect way to demonstrate this, with nodes connected
 to other nodes with which it shares a similarity above a certain threshold,
 arranging this network could help highlight added regions. These regions could
@@ -283,20 +361,26 @@ completed in a certain way by a group of students. A subset may have completed
 the second half in a way that is unique from the rest of the set, but similar
 to how yeat another group of students completed it. This would be great to
 highlight to lab coordinators, who could provide group feedback on a per method
-basis for example.
+basis for example. Unfortunately This is where the limitations of Orange come in
+-- the toolkit provides a network creation tool, however it doesn't work with
+our limitied input, but rather requires the richer list of feature vectors.
 
 \section{File Compare View}
-The protoype compare view is an 
-
-\todo{hard to evaluate}
-\todo{predictive validity}
-\todo{different sized trees dont work very well -- DSE as an example}
-\todo{simplistic code, ok for our purpose. genrealisable to bigger projects?}
-\todo{where it falls down}
-\todo{speed}
-\todo{unable to reproduce results}
-todo[integration of other algos]
-
-todo[file compare view: needs improving]
-
-todo[file compare view: is it right?]
+The protoype compare view is an interesting visualisation. It is currently able
+to find the most similar method between two files in a very reasonable time.
+The view was implemented using the compare package of Eclipse.
+Given the restrictions imposed on us through Eclipse's security model, it
+was necessary to simply copy and paste the TextMergeViewer class and start
+commenting out compilation errors. The class itself is a huge monolithic
+class of more than 5000 lines, taking care of both UI and business logic;
+this hampered our understanding of the class and so we modified only the 
+methods whose function we were clear on. The modifications enabled us to
+make rudimentary changes to the UI and thus display the results we did,
+however any more complex changes risked breaking all of the functionality.
+AS an example, we were hoping to be able to include non sequential matching
+i.e. for a program of method declaration sequence A, B and another functionally
+equivalent program with method declaration sequence B, A would be able to link
+the two matching nodes. The requirements to do this were unknown as a result
+of the large size. It is a result of this that we felt the most useful
+proof of concept idea was to simply compare the method declarations of the
+subtrees to give a broad area of single similarity.
