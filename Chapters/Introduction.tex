@@ -3,7 +3,7 @@
 
 \label{Introduction} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-\lhead{Chapter 1. \emph{Introduction}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+%\lhead{Chapter 1. \emph{Introduction}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
 
 \section{Motivation}
 
@@ -62,10 +62,13 @@ analysis; as such, the contributions are varied:
 \begin{itemize}
 
 \item An Eclipse plugin to compute similarity between projects in the workspace.
-This plugin returns values only on chosen files [NOT YET! TODO], ignoring the
+This plugin returns values only on chosen files \todo{todo}, ignoring the
 similarity of selected files as given by the user (e.g. any library files students
 aren't expected to change). It outputs to text file the data in various forms
 for easy analysis.
+
+\item An extension to the plugin, allowing comparison of individual files,
+with the most similar methods being highlighted in a diff window.
 
 \item A bash script to generate eclipse projects and thus valid classpaths etc.
 for projects in all subdirectories given a group of folders containing bare git
@@ -78,3 +81,6 @@ and data visualisation on the outputted data.
 \item Statistical analysis of the clusters.
 
 \end{itemize}
+
+
+\todo{talk about algoirthms briefly(?)}
