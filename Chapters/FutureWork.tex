@@ -1,6 +1,6 @@
 \chapter{Conclusions}
 
-We have examined various approaches to plagiarism detection in reasearch,
+We have examined various approaches to plagiarism detection in research,
 and how they are applicable to the idea of similarity detection.
 Highlighting an area that is somewhat underrepresented in the literature,
 we created a system to perform similarity analysis on Java code based on a 
@@ -30,7 +30,7 @@ relate specifically to the plugin developed, such as speed improvements and exte
 There is also scope to expand on the theoretical aspect of the project, with potential
 new algorithms or analyses to be presented.
 
-\subsection{Speed up via Heuristics}
+\section{Speed up via Heuristics}
 \begin{itemize}
 \item
 Much of the algorithm implementation is naive with respect to the problem domain.
@@ -60,12 +60,12 @@ similarity is thought to be transitive; if File A is similar to File B, and
 File B is dissimilar to File C, it follows that File A would likely be dissimilar
 to File C. Again, whilst this would be fairly straightforward to implement, it
 is trickier to be certain of the advantages this would bring. As discussed in
-\cref{Evaluation}, there can be multiple clusters that a piece of code belongs
+Chapter 6.1, there can be multiple clusters that a piece of code belongs
 to, in the case described, applying this method may result in the cluster
 spanning files skipping comparisons with files that actually prove to be similar.
 \end{itemize}
 
-\subsection{Correctness Improvements}
+\section{Correctness Improvements}
 
 \begin{itemize}
 \item
@@ -84,11 +84,11 @@ clusters would thus be difficult to spot.
 Programmers often have their own style of coding. Examples include
 declaration of variable in vs. outside of for loop declarations;
 using the ternary operator vs. an if-then-else. These language
-different consructs perform the same function as their alternatives,
+different constructs perform the same function as their alternatives,
 however would come under a different node type during comparison
 and thus be seen as not a match, despite the code being similar as a result of
 this. If the nodes were transformed such that the functionally equivalent
-styles were made identical, it would hepl improve useful feedback by
+styles were made identical, it would help improve useful feedback by
 categorising the users as similar.
 
 \item
@@ -97,14 +97,4 @@ their robustness and correctness has been well proven. A merged approach of type
 of similarity measure could be used to inform on each other how similar certain
 constructs are. A learning approach could even be used so that the separate algorithms
 could learn from each other, improving their own correctness.
-\todo{integrate with other algorithms}
 \end{itemize}
-% \section{Additions}
-
-% \todo{other languages with CDT etc.}
-
-% \todo{improvements to compare view}
-
-% \todo{different similarity algos?}
-
-% \todo{modification to show difference? if they dont match return 1, else return 1-(1/depth+1)*lambda * min(recurse)}

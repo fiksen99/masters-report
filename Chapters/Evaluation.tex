@@ -51,7 +51,7 @@ who only has a small smattering of while loops.
 \begin{figure}[p]
 
 	\centering
-		\includegraphics[width=1.2\textwidth]{Figures/RecursionClustering}
+		\includegraphics[width=0.7\textwidth]{Figures/RecursionClustering}
 	\caption{The clustering hierarchy performed with complete linkage}
 	\label{fig:recursionHierarchy}
 
@@ -145,13 +145,13 @@ of submissions per cluster. What is defined as ``reasonable'' is open to debate,
 however we can start to see similar patterns emerging from the defined clusters.
 Interestingly there also appears to be a distinction between clusters too --
 the problem of identifying differences in code is perhaps even more difficult
-than identfying similarities. Still, given the example of an iterative solution
+than identifying similarities. Still, given the example of an iterative solution
 to recursive exercise, and the reluctance of that cluster to combine with others,
 it is a good indication of validity.
 
-Our succesful cases aren't constrained to the one exercise either. 
-\cref{fig:LoopsAndArraysHeatmap} and \cref{fig:LoopsAndArraysHierarchy}
-demonstrate the outputs of our similarity function to the parse tree kernel
+Our successful cases aren't constrained to the one exercise either. 
+\cref{fig:LoopsAndArraysHeatmap} 
+demonstrates the outputs of our similarity function to the parse tree kernel
 function.
 
 
@@ -206,7 +206,8 @@ of this, the top half of the normalisation equation \cref{eq:normalise}
 \section{Reflexivity}
 In a similarity measure, we expect the output to be reflexive, that is the similarity of trees `A' and `B' should be equal to the similarity of trees `B' and `A'. The algorithm doesn’t actually address this issue, and in its original state, it is not reflexive.
 
-For example take the parse trees in ??. If we apply the C step of the parse tree kernel algorithm to the root nodes of T1 and T2(i.e. 
+For example take the parse trees T1 with root node A, child nodes A and B, and T2 with
+root node A, child nodes A and A. If we apply the C step of the parse tree kernel algorithm to the root nodes of T1 and T2(i.e. 
 $C(ClassDefinition\textsubscript{T1},ClassDefinition\textsubscript{T2}$) assuming a decay factor of $\lambda$ and $threshold depth > 1$, we get the result $\lambda(1 + \lambda)$. 
 We get this result as the comparison of root nodes yields 
 $lambda \times x$ where $x$ is the result of the product of the similarity of T1s children
@@ -222,17 +223,16 @@ iterate over both child nodes in T2, comparing it with the single child node of
 T1. Each node comparison multiplies the result by $1+C(MethodDeclaration\textsubscript{T2},MethodDeclaration\textsubscript{T1})$, the call to $C$ returning $\lambda$, as above. As such, we have a different result depending on the order of comparison.
 The options we had in modifying the algorithm to maintain reflexivity
 focussed on the fact that regardless of order the nodes were passed in to the comparison function, the children must be iterated on in the same manner. 
-\todo{could have iterated both ways and taken an average, copmutationally infeasible}
 i.e. if $C(n\textsubscript{1},n\textsubscript{2})$ goes through each child of $n\textsubscript{2}$ and the max similarity of each with $n\textsubscript{1}$, then the same should happen for
 $C(n\textsubscript{2},n\textsubscript{1})$. We could have calculated the hashcode of the inputted node and then chosen, for example, the node with the smallest hashcode to be the `primary' iterated node. This, however, is an arbitrary decision and doesn’t address the issue of why we get different values for similarity. The decision was to check the number of children of the two root nodes, and make the node with the fewest number of children the primary node.
 This decision is justified in the context. Consider a modified version of the two trees in 
-\cref{fig:nonReflexTree}, where T\textsubscript{2} has a large number of method declarations, asin \cref{fig:manyMethodTree }and T\textsubscript{1} remains the same. If we set the
+, where T\textsubscript{2} has a large number of method declarations,  and T\textsubscript{1} remains the same. If we set the
 root of T\textsubscript{2} to be the primary node, we would match every child node with the one child node of T\textsubscript{1}, artificially inflating the similarity between the two, when the similarity it could be argued, is actually much smaller. Rather, it is more useful to set the root of T\textsubscript{1} as the primary node -- this will match the child node once with any child of T\textsubscript{2}, but only once. Once the normalising step is applied, the size of 
 T\textsubscript{2} is likely to reduce the effect this matched node has as the unnormalised similarity of T\textsubscript{2} with itself will be much greater than that of the two trees’ unnormalised similarity with each other. 
 
 This method of ordering takes care of most cases of reflexivity, but it
-was discovered that non-reflexive results could still occur in the instance de-
-scribed in \ref{fig:furtherNonReflex}. Here, the two trees have the same number of children, so the
+was discovered that non-reflexive results could still occur in the instance where
+ the two trees have the same number of children, so the
 previous problem is avoided, however it is a case that has been previously
 missed. If the roots of trees T\textsubscript{1} and T\textsubscript{2} are passed in
  to $C(n\textsubscript{1},n\textsubscript{2})$, there
@@ -258,17 +258,16 @@ node with the highest priority unique child would be set as the primary. As stat
 this would take a lot of effort, weighing up the value behind each type of node
 of the parse tree, of which there are around 100, so this was left unimplemented.
 
-\todo{fails when smaller tree is duplicated numerous times in bigger tree}
 
 \section{Results Comparison}
 
 A novel use of the tool is compare the marks received by students with the outputted clusters.
 Given a student's work is evaluated at 10/10, it is likely that any
 code with high similarity would be given the same grade. When plotting the graph
-of mark against similarity to this paricular piece of work, it's expected to
+of mark against similarity to this particular piece of work, it's expected
 to see a graph indicating that students further away from this student's code
 base received worse marks. What would be interesting to observe on this graph,
-are any nodes that do not conform to this pattern, particuarly if the non-conforming
+are any nodes that do not conform to this pattern, particularly if the non-conforming
 pieces are sparse. If we have a cluster of results that are dissimilar to the
 selected top mark, but all received a high mark, this would indicate a 
 non-unique solution to the exercise and graders could provide group feedback
@@ -303,7 +302,7 @@ set as 3 and 0.3 in the initial research for the algorithm\cite{ParseTreeKernel}
 The paper doesn't offer any insight as to how to calculate the optimal values
 for this so we developed our own technique. We noticed that generally a higher value
 for each would incorporate more information in a similarity analysis. Although we
-want to avoid the issues discussed in \cref{Background} where the root node has
+want to avoid the issues discussed in Chapter 6.2 where the root node has
 an overwhelming effect on the score, a tree with matching nodes that goes down
 many levels should contribute to the score more, as this kind of structure matching
 is very unlikely and thus indicitave of similar code, justifying increasing the
@@ -334,7 +333,7 @@ values, it is able to display a large number of information types. It would be
 ideal if we could utilise some of these extra tools for our analysis. Specifically,
 an issue with our clustering method, is that it is confined to the single dimension.
 There are a few times throughout the maps where we see small parts of a cluster
-that acutally have high similarity with other clusters (to find these 
+that actually have high similarity with other clusters (to find these 
 additional clusters, we need to look for larger squares of similarity away from
 the main diagonal). This indicates that, although the cluster this subcluster
 is part of is the most appropriate, it could also belong to the other cluster,
@@ -359,14 +358,14 @@ arranging this network could help highlight added regions. These regions could
 occur where parts of a project, perhaps the first half of an exercise, were
 completed in a certain way by a group of students. A subset may have completed
 the second half in a way that is unique from the rest of the set, but similar
-to how yeat another group of students completed it. This would be great to
+to how r another group of students completed it. This would be great to
 highlight to lab coordinators, who could provide group feedback on a per method
 basis for example. Unfortunately This is where the limitations of Orange come in
 -- the toolkit provides a network creation tool, however it doesn't work with
-our limitied input, but rather requires the richer list of feature vectors.
+our limited input, but rather requires the richer list of feature vectors.
 
 \section{File Compare View}
-The protoype compare view is an interesting visualisation. It is currently able
+The prototype compare view is an interesting visualisation. It is currently able
 to find the most similar method between two files in a very reasonable time.
 The view was implemented using the compare package of Eclipse.
 Given the restrictions imposed on us through Eclipse's security model, it

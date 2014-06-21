@@ -16,10 +16,10 @@ It is now clear why we should leverage this research -- to reliably detect plagi
 we must first reliably judge similarity.
 
 Code similarity detection techniques have been divided up into a number of subclasses:
-text/token, source tree, PDG (Program Dependency Graph) and metric based\cite{CloneDetection}.
+text, token, source tree, PDG (Program Dependency Graph) based\cite{CloneDetection}.
 
-Textual analysis is another popular area of research in plagiarism
-detection. Analysis of this type is the most naive, there is no leveraging
+Textual analysis is a popular area of research in plagiarism
+detection. Analysis of this type is the most na\"{\i}ve; there is no leveraging
 of our knowledge of the files we are comparing. Generally these algorithms
 will compare two pieces of code by considering them both as a sequence of
 strings (often using a line per string), matching the number of identical
@@ -30,15 +30,15 @@ certain types of elements with a uniform replacement, as described in
 \cref{tab:normalise}. An example of these optimisations can be see in 
 \cref{code:optimisedText}. The exact similarity value calculated depends -- as
 with most general approaches in this area -- on the specific algorithm used.
-For example \cite{DucasseText} apply all previously mentioned optimisations,
-and iterates over each line, performing a string comparison algorithm to recognise
+For example Ducasse et. al\cite{DucasseText} apply all previously mentioned optimisations,
+and iterate over each line, performing a string comparison algorithm to recognise
 the longest subsequence matches. We can see how removing the comments,
 whitespace and other uninteresting language constructs would improve string
 matching, as these sections don't change the semantics of code, yet could cause
 misses in the matching algorithm if people used different comments etc. in
 their solutions, as is expected, and they were retained.
 
-\begin{figure}[p]
+\begin{figure}[h!]
 \label{tab:normalise}
 \begin{tabular}{| l | l | l |}
 \hline 
@@ -61,7 +61,7 @@ Function name & main & foo() \\
 \end{tabular}
 \caption{Normalization table as used in text based approaches\cite{DucasseText}}
 \end{figure}
-\begin{figure}[p]
+\begin{figure}[h!]
 \begin{tabular}{l l l}
 \textbf{Original Code} & \textbf{After Normalising} & \textbf{After Filtering} \\
 \texttt{include stdio.h} & \texttt{include lib} & \\
@@ -81,24 +81,23 @@ Function name & main & foo() \\
 Token based approaches take on a more intelligent approach to similarity analysis
 than textual analysis, however the fundamental idea behind token analysis is similar.
 Initially, the source code is lexed, or otherwise transformed, into a sequence of tokens.
-From here we can perform analysis on the sequences to determine simlarity, as described
+From here we can perform analysis on the sequences to determine similarity, as described
 below.
 
 A number of different algorithms have been developed for this purpose.
 MOSS is a popular tool used throughout academia for detecting plagiarism
-in code, which accepts a large number of input source code files and uses certain
-techniques to check for plagiarism. The technique used is known as 
+in code, which accepts a large number of input source code files and uses 
+its own method to check for plagiarism. The technique used is known as 
 ``winnowing''~\cite{winnowing}. This process takes ideas from earlier detection
 techniques, such as \emph{k-grams}, and applies their own algorithms to indicate
-code duplication. The\emph{k-gram} approach involves splitting the source code up into
+code duplication. The \emph{k-gram} approach involves splitting the source code up into
 strings of length $k$, ($k$ is defined by the user and is implementation specific).
 The winnowing algorithm works by hashing the \emph{k-grams} and moving through 
-\emph{windows} ($w$ consecutive \emph{k-gram} hashes)
-of these hashes.
+\emph{windows}, $w$ consecutive \emph{k-gram} hashes.
 The winnowing step is the defined as: 
 \begin{quote}In each window select the minimum hash value.
 If there is more than one hash with the minimum value, select the rightmost
-occurance. Now save all selected hashes as the fingerprints of the document.
+occurence. Now save all selected hashes as the fingerprints of the document.
 \cite{winnowing}
 \end{quote}
 
@@ -107,7 +106,7 @@ has minimal effect and, if possible, variable renaming to normalised names.
 The resulting fingerprints are then compared with the fingerprints of another
 code base, with more hits indicating a larger likelihood of plagiarism.
 
-\begin{figure}[H]
+\begin{figure}[h!]
 \begin{minipage}[b]{0.45\linewidth}
 \begin{lstlisting}[language=Java]
 int len = 5;
@@ -165,7 +164,7 @@ One example converts code into specific tokens, such as \texttt{BEGIN\_CLASS}, \
 etc., as shown in \cref{fig:JPlagTokenCreation}. These token arrays are 
 compared between files with ``Greedy String Tiling''\cite{GreedyStringTiling}.
 The largest matching tiles are selected from the tokenised arrays and a similarity
-calculated between the files using their similiarity function:
+calculated between the files using their similarity function:
 \[sim(A,B) = 2 \cdot
 coverage(tiles)/(|A| + |B|)\] where \[coverage(tiles) =
 \sum\nolimits_{match(a,b,length) \in tiles}length\]
@@ -185,18 +184,18 @@ coverage(tiles)/(|A| + |B|)\] where \[coverage(tiles) =
 \lstinline[language=Java]!}! & END\_CLASS \\
 \end{tabular}
 \caption{Taken from \citep[p.~1020]{JPlag}}
-\end{figure}
 \label{fig:JPlagTokenCreation}
+\end{figure}
 
 
 PDG analysis is based on the idea of abstracting your programs, and generating
 graphs based on the flow of code, in particular the branching of conditionals
-and and access to data\cite{PDGOptimisation}. The structure of these graphs
+and access to data\cite{PDGOptimisation}. The structure of these graphs
 is generally invariant under plagiarism, as it is robust to changes in line
 orders, additional comments and whitespace\cite{GPLAG}. As a result, the technique is well
 suited to plagiarism and therefore similarity detection. Numerous studies have been based
 on the PDG approach to plagiarism detection\cite{GPLAG} \cite{OtherPDG}, giving
-interesting results into it's applicability.
+interesting results into its applicability.
 
 There is a small amount of research which analyses the parse trees
 of the code directly. Though sparse, the work in this area is interesting
@@ -291,8 +290,8 @@ return sqr;
 
 Building on the work of \cite{Belkhouche}
 we came across a recently published algorithm based on a parse tree kernel function
-\cite{ParseTreeKernel}. The parse tree kernel function has it's roots
-in Natural Language Processing, in particular ``Convultion Kernels'' for natural
+\cite{ParseTreeKernel}. The parse tree kernel function has its roots
+in Natural Language Processing, in particular ``Convolution Kernels'' for natural
 language\cite{NLPKernel}. A kernel function between two data sets is an ``evaluation
 of the dot product between pairs of examples''\cite{NLPKernel}. It is possible
 to apply a kernel function to a many-dimensional space and efficiently calculate
@@ -406,11 +405,11 @@ C(n\textsubscript{1}, n\textsubscript{2}) = \lambda\prod_{i}^{nc(n\textsubscript
 Taking note of the definition of productions, we see another error with this
 approach to source code -- the number of children of a node of a certain type
 are unlikely to be the same even when code is similar. For example, if a function
-is split into two, but preforms the exact same function, the children of a
+is split into two, but performs the exact same function, the children of a
 \emph{class definition} would change. Further to this, the algorithm currently
 only checks the nodes in order, i.e. the $i$th child of $n\textsubscript{1}$ is
 compared with the $i$th child of $n\textsubscript{2}$ only. In source code, we
-can usually change the order of statments without affecting the the semantics
+can usually change the order of statements without affecting the the semantics
 of the program. These observations result in another change to the equation.
 
 If $n\textsubscript{1}$ and $n\textsubscript{2}$ are different (this is understood
@@ -599,7 +598,7 @@ It provides tools for Java developers to write compile and debug their applicati
 Further to this, it also provides a feature rich environment in which developers
 can create additional plugins to add functionality to the base Eclipse distribution.
 
-With access to this plugin framework, Eclipse exposes some of it's internal APIs
+With access to this plugin framework, Eclipse exposes some of its internal APIs
 and allows developers to be able to manipulate Java in complex ways. The key feature
 of this, as it relates to us, is the ability to plug in to the Java compiler of Eclipse
 and manipulate the Parse trees as we wish. This easy access to a parse tree in a
@@ -650,7 +649,7 @@ From here, the pair of clusters with the smallest
 distance (or highest similarity) between the two is merged to form a new cluster.
 The distance between this new cluster and the other clusters is updated to be
 the max distance from the two merged clusters to the other clusters. This process
-is repeated until a Heirarchy of clusters has been formed and the data is merged
+is repeated until a hierarchy of clusters has been formed and the data is merged
 into one cluster. The Hierarchical Clustering widget displays this hierarchy
 and allows the user to move the cutoff point, to increase the number/reduce the
 size of clusters to their desired level.

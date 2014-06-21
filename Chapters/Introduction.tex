@@ -7,7 +7,7 @@
 
 \section{Motivation}
 
-Students of Computer Science across the world are intially brought into the field
+Students of Computer Science across the world are initially brought into the field
 with simple exercises, designed to educate and test their ability on concepts
 fundamental to a good software engineer. With the huge volume of code submitted,
 there is a wealthy resource of patterns and information that can be extracted
@@ -37,26 +37,25 @@ achieve:
 \begin{itemize}
 
 \item Modification of plagiarism detection techniques to give an accurate value
-of similarity of student code. Current research predominantely returns a binary
-(or occasionaly ternary) `yes', `no' (or `maybe') value, we wish to give a much
-finer grained answer.
+of similarity of student code. Current research predominantly returns a sliding
+scale answer.
 
 \item Analysis of similarity measures as to which provides the most accurate
 and useful information.
 
 \item Interesting statistical analysis and data visualisation of the data -- 
 we'd like to be able to cluster similar code and see how these clusters change
-over the course of projects; how the marks awarded vary within a cluster, and
+over the course of projects, how the marks awarded vary within a cluster, and
 other interesting insights. 
 
 \item Presentation of data in a way which provides utility for current markers
--- group feedback to be given on simliarly structured code etc.
+-- group feedback to be given on similarly structured code etc.
 
 \end{itemize}
 
 \section{Contributions}
 
-The project shares it's focus between a software engineering approach and statistical
+The project shares its focus between a software engineering approach and statistical
 analysis; as such, the contributions are varied:
 
 \begin{itemize}
@@ -71,16 +70,13 @@ for easy analysis.
 with the most similar methods being highlighted in a diff window.
 
 \item An implementation of a similarity analysis algorithm integrated in the
-plugin
+plugin.
 
-\item A bash script to generate eclipse projects and thus valid classpaths etc.
+\item A bash script to generate Eclipse projects and thus valid classpaths etc.
 for projects in all subdirectories given a group of folders containing bare git
 repositories. Also the ability to clean these folders back to just the git
-repository
+repositories.
 
 \item Settings to be passed into the python library Orange to perform clustering
 and data visualisation on the outputted data.
-
-\item Statistical analysis of the clusters.
-
 \end{itemize}

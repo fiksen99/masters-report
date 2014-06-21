@@ -156,7 +156,7 @@ compared with each file from the other project in turn, and uses this value as t
 similarity score for that particular parse tree (which is then summed with the similarity
 score from each other parse tree). We chose the maximum rather than the mean, as
 you might expect with similarity, as the mean method would negatively weight our
-similarity even when an exect match is found. For example, if we have a project A
+similarity even when an exact match is found. For example, if we have a project A
 containing 2 files, \texttt{A1.java} and \texttt{A2.java} (which are very different
 to each other) and a similar project B with files \texttt{A1.java} and \texttt{B2.java}.
 Even if the files in project A are exactly the same as the corresponding files in
@@ -165,7 +165,7 @@ which is undesirable in this context.
 
 Once we have a similarity between every project in our workspace, we need a place
 to see our results; this is where 
-\texttt{com.imperial.fiksen.codesimilarity.utils.ResultsPrinter} comes in.
+\texttt{ResultsPrinter} comes in.
 The SimilarityAnalyser has a print function, which
 passes in an OutputStream (usually a stream to the file we want to create) and
 there are a number of functions depending on our desired output format; currently
@@ -185,7 +185,7 @@ interesting -- for example, looking at the heatmap display,
 we could identify an interesting cluster which
 appears dissimilar to most of the other submitted code, but very similar to
 each other. If we cross reference this with the grades received and see
-onsistent grading of these unique outliers, it would be interesting to open
+consistent grading of these unique outliers, it would be interesting to open
 the files together and perform some comparison to see why they are especially
 similar. It would be simple to open the files together and perform a manual
 inspection, but we were interested in seeing if our similarity algorithm could
@@ -209,13 +209,13 @@ to the general similarity of the projects.
 	\label{fig:diffView}
 \end{figure}
 
-To implement this we worked through the eclispe source code, specifically
+To implement this we worked through the Eclipse source code, specifically
 the org.eclipse.compare packages\footnote{http://goo.gl/hhjWK7}. The documentation
 on modifying the differencing engine was sparse and large, complex library 
 classes required an ad hoc approach to creating our required classes.
 Initially we created another extension in the menu as an entry to our program
 and hooked up a new handler to deal with the comparison. This handler opens
-up a 2 way comparison between every seleted file, using our custom 
+up a 2 way comparison between every selected file, using our custom 
 SimilarityCompareEditorInput. The SimilarityCompareEditorInput borrows 
 a large amount of code from the eGit
 codebase\footnote{https://git.eclipse.org/c/egit/egit.git/tree/}, and is essentially a thinned out version of their
@@ -224,8 +224,8 @@ configuration of files.
 
 The custom diff view is then created with dependency injection. Using the
 JavaContentViewerCreator\footnote{http://rubenlaguna.com/wp/2007/08/18/eclipse-cvs-compare/}, and extending the extension point
-\texttt{org.eclipse.compare.contentMergeViewers}, we generate our ParseTreeMergeViewer.
-This class is a copy of the \texttt{TextMergeViewer} Eclipse class, modified to use
+compare.contentMergeViewers, we generate our ParseTreeMergeViewer.
+This class is a copy of the Text-MergeViewer Eclipse class, modified to use
 its own fields and methods, rather than the inaccessible package protected versions
 of the ContentMergeViewer, which is being extended. The primary modification
 to this class was the use of ParseTreeDocumentMerger as a replacement for the
